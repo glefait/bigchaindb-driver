@@ -1087,7 +1087,7 @@ class Transaction(object):
             # NOTE: Not all Cryptoconditions return a `signature` key (e.g.
             #       ThresholdSha256), so setting it to `None` in any
             #       case could yield incorrect signatures. This is why we only
-            #       set it to `None` if it's set in the dict.
+            #       set< it to `None` if it's set in the dict.
             input_['fulfillment'] = None
         return tx_dict
 

@@ -43,6 +43,7 @@ class BigchainDB:
         self._outputs = OutputsEndpoint(self)
         self._blocks = BlocksEndpoint(self)
         self._assets = AssetsEndpoint(self)
+        self._assetskv = AssetsKVEndpoint(self)
         self._metadata = MetadataEndpoint(self)
         self.api_prefix = '/api/v1'
 
@@ -79,6 +80,13 @@ class BigchainDB:
             Exposes functionalities of the ``'/assets'`` endpoint.
         """
         return self._assets
+
+    @property
+    def assetskv(self):
+        """:class:`~bigchaindb_driver.driver.AssetsKVEndpoint`:
+            Exposes functionalities of the ``'/assetskv'`` endpoint.
+        """
+        return self._assetskv
 
     @property
     def metadata(self):
@@ -480,6 +488,11 @@ class BlocksEndpoint(NamespacedDriver):
         return self.transport.forward_request(
             method='GET', path=path, headers=None)
 
+    def latest(self, headers=None):
+        path = self.api_prefix + '/latest/block'
+        return self.transport.forward_request(
+            method='GET', path=path, headers=None)
+
 
 class AssetsEndpoint(NamespacedDriver):
     """Exposes functionality of the ``'/assets'`` endpoint.
@@ -508,6 +521,37 @@ class AssetsEndpoint(NamespacedDriver):
             method='GET',
             path=self.path,
             params={'search': search, 'limit': limit},
+            headers=headers
+        )
+
+
+class AssetsKVEndpoint(NamespacedDriver):
+    """Exposes functionality of the ``'/assets'`` endpoint.
+
+    Attributes:
+        path (str): The path of the endpoint.
+
+    """
+
+    PATH = '/assetskv/'
+
+    def get(self, key, value, limit=0, headers=None):
+        """Retrieves the assets that match a given text search string.
+
+        Args:
+            search (str): Text search string.
+            limit (int): Limit the number of returned documents. Defaults to
+                zero meaning that it returns all the matching assets.
+            headers (dict): Optional headers to pass to the request.
+
+        Returns:
+            :obj:`list` of :obj:`dict`: List of assets that match the query.
+
+        """
+        return self.transport.forward_request(
+            method='GET',
+            path=self.path,
+            params={'key': key, 'value': value, 'limit': limit},
             headers=headers
         )
 
